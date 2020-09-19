@@ -1,0 +1,7 @@
+server:
+  #访问端口号
+  port: 8080
+  servlet:
+    #请求路径
+    context-path: /dcims
+

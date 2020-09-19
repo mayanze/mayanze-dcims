@@ -9,13 +9,9 @@ mayanze-dcims是根据"2019软件设计师"真题第3道大题所做的一套信
 ### 演示地址
 [http://mayanze.com/dcims](http://mayanze.com/dcims)
 
-演示环境账号密码
-
-账号 | 密码| 权限
----|---|---
-demo | 0 | 拥有演示权限
 
 ###技术选型
+
 后端
 * [SpringBoot SpringBootSecurity 2.3.1](https://spring.io/projects/spring-boot/)
 * [MyBatis-Plus](https://baomidou.com/guide/)
@@ -23,7 +19,30 @@ demo | 0 | 拥有演示权限
 
 前端
 
-* [MiniUI](http://www.miniui.com/demo/#src=datagrid/celledit.html)
+* [MiniUI 3.9.4](http://www.miniui.com/docs/quickstart/)
 * FreeMarker
 * Jquery
+
+### 系统模块
+系统功能模块组成如下所示：
+```
+├─
+├─系统管理
+│  ├─用户管理
+│  ├─角色管理
+│  ├─菜单管理
+│  └─部门管理
+├─系统监控
+│  ├─在线用户
+│  ├─系统日志
+│  ├─登录日志
+│  ├─请求追踪
+│  ├─系统信息
+│  │  ├─JVM信息
+│  │  ├─TOMCAT信息
+│  │  └─服务器信息
+├─
+|
+
+```
 
