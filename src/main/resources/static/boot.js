@@ -3,23 +3,23 @@
 mini_debugger = true;                                           //
 
 //miniui
-document.write('<script src=jquery.min.js type="text/javascript"></sc' + 'ript>');
-document.write('<script src=miniui/miniui.js type="text/javascript" ></sc' + 'ript>');
-document.write('<link href="miniui/res/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />');
-document.write('<link href=miniui/themes/default/miniui.css rel="stylesheet" type="text/css" />');
+document.write('<script src='+bootPATH+'/jquery.min.js type="text/javascript"></sc' + 'ript>');
+document.write('<script src='+bootPATH+'/miniui/miniui.js type="text/javascript" ></sc' + 'ript>');
+document.write('<link href="'+bootPATH+'/miniui/res/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />');
+document.write('<link href='+bootPATH+'/miniui/themes/default/miniui.css rel="stylesheet" type="text/css" />');
 
 //common
-document.write('<link href="miniui/res/css/common.css rel="stylesheet" type="text/css" />');
-document.write('<script src="miniui/res/js/common.js" type="text/javascript" ></sc' + 'ript>');
+document.write('<link href="'+bootPATH+'/miniui/res/css/common.css rel="stylesheet" type="text/css" />');
+document.write('<script src="'+bootPATH+'/miniui/res/js/common.js" type="text/javascript" ></sc' + 'ript>');
 
 //skin
-document.write('<link href="miniui/themes/gray/skin.css" rel="stylesheet" type="text/css" />' + skin + '');
+document.write('<link href="'+bootPATH+'/miniui/themes/gray/skin.css" rel="stylesheet" type="text/css" />');
 
 //mode
-document.write('<link href="miniui/themes/default/large-mode.css" rel="stylesheet" type="text/css" />' + mode + '');
+document.write('<link href="'+bootPATH+'/miniui/themes/default/large-mode.css" rel="stylesheet" type="text/css" />');
 
 //icon
-document.write('<link href=miniui/themes/icons.css rel="stylesheet" type="text/css" />');
+document.write('<link href='+bootPATH+'/miniui/themes/icons.css rel="stylesheet" type="text/css" />');
 
 ////////////////////////////////////////////////////////////////////////////////////////
 function getCookie(sName) {

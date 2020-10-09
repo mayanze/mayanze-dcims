@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title></title>
-    <script src="boot.js" type="text/javascript"></script>
-    <link href="miniui/res/third-party/scrollbar/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css" />
-    <script src="miniui/res/third-party/scrollbar/jquery.mCustomScrollbar.concat.min.js" type="text/javascript"></script>
-    <link href="miniui/res/menu/menu.css" rel="stylesheet" type="text/css" />
-    <script src="miniui/res/menu/menu.js" type="text/javascript"></script>
-    <script src="miniui/res/menutip.js" type="text/javascript"></script>
-    <link href="miniui/res/tabs.css" rel="stylesheet" type="text/css" />
-    <link href="miniui/res/frame.css" rel="stylesheet" type="text/css" />
-    <link href="miniui/res/index.css" rel="stylesheet" type="text/css" />
+    <script src="${ctx}/boot.js" type="text/javascript"></script>
+    <link href="${ctx}/miniui/res/third-party/scrollbar/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css" />
+    <script src="${ctx}/miniui/res/third-party/scrollbar/jquery.mCustomScrollbar.concat.min.js" type="text/javascript"></script>
+    <link href="${ctx}/miniui/res/menu/menu.css" rel="stylesheet" type="text/css" />
+    <script src="${ctx}/miniui/res/menu/menu.js" type="text/javascript"></script>
+    <script src="${ctx}/miniui/res/menutip.js" type="text/javascript"></script>
+    <link href="${ctx}/miniui/res/tabs.css" rel="stylesheet" type="text/css" />
+    <link href="${ctx}/miniui/res/frame.css" rel="stylesheet" type="text/css" />
+    <link href="${ctx}/miniui/res/index.css" rel="stylesheet" type="text/css" />
 
 </head>
 <body>
@@ -35,7 +35,7 @@
         <li><a href="#"><i class="fa fa-pencil-square-o"></i> 修改密码</a></li>
         <li class="dropdown">
             <a class="dropdown-toggle userinfo">
-                <img class="user-img" src="miniui/res/images/user.jpg" />个人资料<i class="fa fa-angle-down"></i>
+                <img class="user-img" src="${ctx}/miniui/res/images/user.jpg" />个人资料<i class="fa fa-angle-down"></i>
             </a>
             <ul class="dropdown-menu pull-right">
                 <li ><a href="#"><i class="fa fa-eye "></i> 用户信息</a></li>
@@ -100,7 +100,7 @@
         new MenuTip(menu);
 
         $.ajax({
-            url: "miniui/data/menu.txt",
+            url: "${ctx}/miniui/data/menu.txt",
             success: function (text) {
                 var data = mini.decode(text);
                 menu.loadData(data);
