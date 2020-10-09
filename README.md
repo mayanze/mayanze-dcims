@@ -6,7 +6,7 @@ mayanze-dcims是根据"2019软件设计师"真题第3道大题所做的一套信
 看了[FreeMarker、Thymeleaf、Enjoy 模板引擎性能测试](https://www.ktanx.com/blog/p/4965)
 ,这篇文章，决定了选择FreeMarker
 
-### 演示地址
+### 演示地址(暂时未开放)
 [http://mayanze.com/dcims](http://mayanze.com/dcims)
 
 
