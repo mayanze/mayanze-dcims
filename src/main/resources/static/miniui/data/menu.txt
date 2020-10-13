@@ -1,6 +1,10 @@
 ﻿[
+    { "id": "ylgl", iconCls: "fa fa-desktop", text: "医疗管理", children: [
+            { "id": "jzxx", iconCls: "fa fa-leaf", text: "就诊信息", url: "pages/yl/jzxx" },
+        ]
+    },
     { "id": "xtgl", iconCls: "fa fa-desktop", text: "系统管理", children: [
-        { "id": "yhgl", iconCls: "fa fa-leaf", text: "用户管理", url: "pages/user" },
-    ]
+            { "id": "yhgl", iconCls: "fa fa-leaf", text: "用户管理", url: "pages/user" },
+        ]
     }
 ]

@@ -2,14 +2,14 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>用户管理</title>
+    <title>就诊信息（挂号）</title>
     <script src="${ctx}/boot.js" type="text/javascript"></script>
 </head>
 <body >
 
 <div style="padding-bottom:5px;">
 
-    <span>姓名：</span><input type="text" id="key"  />
+    <span>就诊人姓名：</span><input type="text" id="key"  />
     <input type="button" value="查找" onclick="search()"/>
 
 </div>
@@ -30,7 +30,7 @@
 </div>
 
 <div id="datagrid1" class="mini-datagrid" style="width:100%;height:250px;"
-     url="${ctx}/sys/user/queryPage"
+     url="${ctx}/yl/jzxx/queryPage"
      ajaxType="get"
      idField="id" allowResize="true"
      sizeList="[20,30,50,100]" pageSize="20"
@@ -40,32 +40,25 @@
     <div property="columns">
         <div type="indexcolumn" ></div>
         <div type="checkcolumn"></div>
-        <div field="code" width="50" headerAlign="center" allowSort="true">员工帐号
-            <input property="editor" class="mini-textbox" style="width:100%;" />
+        <div field="name" width="50" headerAlign="center" allowSort="true">就诊人姓名
+<#--            <input property="editor" class="mini-textbox" style="width:100%;" />-->
+            <input property="editor" id="tbl1" class="mini-autocomplete" required="true" style="width:200px;"
+                   valueField="id" textField="text"
+                   url="${ctx}/sys/user/queryList" value="" text=""
+            />
         </div>
-        <div field="name" width="50" headerAlign="center" allowSort="true">姓名
-            <input property="editor" class="mini-textbox" style="width:100%;" />
+        <div field="code" width="50" headerAlign="center" allowSort="true">就诊号
+            <input property="editor" class="mini-textbox" style="width:100%;" readonly/>
         </div>
-        <div field="sex" width="50" renderer="onGenderRenderer" headerAlign="center" headerAlign="center">性别
-            <input property="editor" class="mini-combobox" style="width:100%;" data="Genders" />
-        </div>
-        <div field="age"  headerAlign="center" width="50" allowSort="true" decimalPlaces="2" dataType="int">年龄
-            <input property="editor" class="mini-spinner"  minValue="0" maxValue="200" value="25" style="width:100%;"/>
-        </div>
-        <div field="idCard" headerAlign="center" width="100" allowSort="true">身份证号
-            <input property="editor" class="mini-textbox" style="width:100%;" />
-        </div>
-        <div field="address"  headerAlign="center" width="100" allowSort="true">住址
-            <input property="editor" class="mini-textbox" style="width:100%;" />
-        </div>
-        <div field="phoneNo" headerAlign="center" width="100" allowSort="true">电话
-            <input property="editor" class="mini-textbox" style="width:100%;" />
-        </div>
-        <div field="createTime" width="100" headerAlign="center" dateFormat="yyyy-MM-dd HH:mm:ss" allowSort="true">创建日期
+        <div field="time" width="100" headerAlign="center" dateFormat="yyyy-MM-dd HH:mm:ss" allowSort="true">就诊日期
             <input class="mini-datepicker" null property="editor" style="width:100%;" nullValue=""
                    format="yyyy-MM-dd H:mm:ss" timeFormat="H:mm:ss" showTime="true" showOkButton="true" showClearButton="false"/>
         </div>
-        <div field="name" width="50" headerAlign="center" allowSort="true">备注
+        <div field="createTime" width="100" headerAlign="center" dateFormat="yyyy-MM-dd HH:mm:ss" allowSort="true">创建日期
+            <input class="mini-datepicker" null property="editor" style="width:100%;" nullValue=""
+                   format="yyyy-MM-dd H:mm:ss" timeFormat="H:mm:ss" showTime="true" showOkButton="true" showClearButton="false" readonly/>
+        </div>
+        <div field="remarks" width="50" headerAlign="center" allowSort="true">备注
             <input property="editor" class="mini-textbox" style="width:100%;" />
         </div>
     </div>
@@ -91,23 +84,12 @@
             search();
         }
     });
-    /**
-     * 性别
-     */
-    var Genders = [{ id: 0, text: '男' }, { id: 1, text: '女'}];
-    function onGenderRenderer(e) {
-        for (var i = 0, l = Genders.length; i < l; i++) {
-            var g = Genders[i];
-            if (g.id == e.value) return g.text;
-        }
-        return "";
-    }
 
     function addRow() {
-        var newRow = { name: "New Row" };
+        var newRow = { code: new Date().getTime(),time: new Date(),createTime: new Date()};
         grid.addRow(newRow, 0);
 
-        grid.beginEditCell(newRow, "LoginName");
+        grid.beginEditCell(newRow, "name");
     }
     function removeRow() {
         var rows = grid.getSelecteds();
@@ -116,7 +98,7 @@
                 function (action) {
                     if (action == "ok") {
                         deleteGrid(rows, {
-                            url: "${ctx}/sys/user/removeByIds"
+                            url: "${ctx}/yl/jzxx/removeByIds"
                         });
                         grid.removeRows(rows, true);
                     } else {
@@ -128,7 +110,7 @@
     }
     function saveData() {
         saveGrid(grid, {
-            url: "${ctx}/sys/user/saveOrUpdateBatch"
+            url: "${ctx}/yl/jzxx/saveOrUpdateBatch"
         });
     }
 
