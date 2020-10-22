@@ -2,6 +2,7 @@ package org.mayanze.dcims.yl.controller;
 
 
 import org.mayanze.dcims.yl.entity.Zlxx;
+import org.mayanze.dcims.yl.service.IZlxxService;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,6 @@ import org.mayanze.dcims.base.BaseController;
  */
 @RestController
 @RequestMapping("/yl/zlxx")
-public class ZlxxController extends BaseController<Zlxx> {
+public class ZlxxController extends BaseController<IZlxxService,Zlxx> {
 
 }

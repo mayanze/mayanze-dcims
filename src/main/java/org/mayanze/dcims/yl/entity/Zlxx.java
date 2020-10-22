@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.mayanze.dcims.base.OperationLog;
 
 /**
  * <p>
@@ -18,7 +19,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Zlxx implements Serializable {
+public class Zlxx extends OperationLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
@@ -46,36 +47,4 @@ public class Zlxx implements Serializable {
      * 治疗费用
      */
     private Double cost;
-
-    /**
-     * 创建人
-     */
-    private String creator;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-
-    /**
-     * 修改人
-     */
-    private String modifier;
-
-    /**
-     * 修改时间
-     */
-    private LocalDateTime modifyTime;
-
-    /**
-     * 删除标识
-     */
-    private Integer deleteFlag;
-
-    /**
-     * 备注
-     */
-    private String remarks;
-
-
 }

@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.mayanze.dcims.base.OperationLog;
 
 /**
  * <p>
@@ -18,13 +20,13 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Jzxx implements Serializable {
+public class Jzxx extends OperationLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
      * id
      */
-    @TableId(type = IdType.ASSIGN_UUID)
+//    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
     /**
@@ -33,44 +35,14 @@ public class Jzxx implements Serializable {
     private String userId;
 
     /**
+     *
+     */
+    @TableField(exist=false)
+    private String userName;
+
+    /**
      * 就诊号
      */
     private String code;
-
-    /**
-     * 就诊时间
-     */
-    private LocalDateTime time;
-
-    /**
-     * 创建人
-     */
-    private String creator;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-
-    /**
-     * 修改人
-     */
-    private String modifier;
-
-    /**
-     * 修改时间
-     */
-    private LocalDateTime modifyTime;
-
-    /**
-     * 删除标识
-     */
-    private Integer deleteFlag;
-
-    /**
-     * 备注
-     */
-    private String remarks;
-
 
 }

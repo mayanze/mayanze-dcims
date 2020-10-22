@@ -11,10 +11,13 @@ import java.util.List;
  */
 public class BasePage<T> extends Page<T> {
     public List<T> data;
+    public void setData(List<T> data) {
+        this.data = data;
+    }
 
     @Override
     public Page<T> setRecords(List<T> records) {
         this.data = records;
-        return this;
+        return super.setRecords(records);
     }
 }

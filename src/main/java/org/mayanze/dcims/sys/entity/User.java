@@ -1,10 +1,9 @@
 package org.mayanze.dcims.sys.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+import org.mayanze.dcims.base.OperationLog;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
 /**
  * <p>
@@ -15,13 +14,12 @@ import java.time.LocalDateTime;
  * @since 2020-10-04
  */
 @Data
-public class User {
+public class User extends OperationLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
      * id
      */
-    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
     /**
      * 姓名
@@ -62,36 +60,5 @@ public class User {
      * 角色ID
      */
     private Integer roleId;
-
-    /**
-     * 创建人
-     */
-    private String creator;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-
-    /**
-     * 修改人
-     */
-    private String modifier;
-
-    /**
-     * 修改时间
-     */
-    private LocalDateTime modifyTime;
-
-    /**
-     * 删除标识
-     */
-    private Integer deleteFlag;
-
-    /**
-     * 备注
-     */
-    private String remarks;
-
 
 }

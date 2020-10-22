@@ -19,10 +19,9 @@
         <table style="width:100%;">
             <tr>
                 <td style="width:100%;">
-                    <a class="mini-button" iconCls="icon-add" onclick="addRow()" plain="true" tooltip="增加...">增加</a>
+                    <a class="mini-button" iconCls="icon-add" onclick="add()" plain="true" tooltip="增加...">增加</a>
+                    <a class="mini-button" iconCls="icon-add" onclick="edit()" plain="true">编辑</a>
                     <a class="mini-button" iconCls="icon-remove" onclick="removeRow()" plain="true">删除</a>
-                    <span class="separator"></span>
-                    <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>
                 </td>
             </tr>
         </table>
@@ -40,26 +39,15 @@
     <div property="columns">
         <div type="indexcolumn" ></div>
         <div type="checkcolumn"></div>
-        <div field="name" width="50" headerAlign="center" allowSort="true">就诊人姓名
-<#--            <input property="editor" class="mini-textbox" style="width:100%;" />-->
-            <input property="editor" id="tbl1" class="mini-autocomplete" required="true" style="width:200px;"
-                   valueField="id" textField="text"
-                   url="${ctx}/sys/user/queryList" value="" text=""
-            />
+        <div field="userName" width="50" headerAlign="center"  align="center" allowSort="true">就诊人姓名
         </div>
-        <div field="code" width="50" headerAlign="center" allowSort="true">就诊号
-            <input property="editor" class="mini-textbox" style="width:100%;" readonly/>
+        <div field="code" width="50" headerAlign="center" align="center" allowSort="true">就诊号
         </div>
-        <div field="time" width="100" headerAlign="center" dateFormat="yyyy-MM-dd HH:mm:ss" allowSort="true">就诊日期
-            <input class="mini-datepicker" null property="editor" style="width:100%;" nullValue=""
-                   format="yyyy-MM-dd H:mm:ss" timeFormat="H:mm:ss" showTime="true" showOkButton="true" showClearButton="false"/>
-        </div>
-        <div field="createTime" width="100" headerAlign="center" dateFormat="yyyy-MM-dd HH:mm:ss" allowSort="true">创建日期
-            <input class="mini-datepicker" null property="editor" style="width:100%;" nullValue=""
-                   format="yyyy-MM-dd H:mm:ss" timeFormat="H:mm:ss" showTime="true" showOkButton="true" showClearButton="false" readonly/>
+<#--        <div field="time" width="100" headerAlign="center" align="center" dateFormat="yyyy-MM-dd HH:mm:ss" allowSort="true">就诊日期-->
+<#--        </div>-->
+        <div field="createTime" width="100" headerAlign="center" align="center" dateFormat="yyyy-MM-dd HH:mm:ss" allowSort="true">创建日期
         </div>
         <div field="remarks" width="50" headerAlign="center" allowSort="true">备注
-            <input property="editor" class="mini-textbox" style="width:100%;" />
         </div>
     </div>
 </div>
@@ -85,12 +73,50 @@
         }
     });
 
-    function addRow() {
-        var newRow = { code: new Date().getTime(),time: new Date(),createTime: new Date()};
-        grid.addRow(newRow, 0);
+    function add() {
+        mini.open({
+            targetWindow: window,
 
-        grid.beginEditCell(newRow, "name");
+            url: "${ctx}/pages/yl/jzxxWindow",
+            title: "新增就诊信息", width: 600, height: 400,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+                var data = { action: "new" };
+                iframe.contentWindow.SetData(data);
+            },
+            ondestroy: function (action) {
+
+                grid.reload();
+            }
+        });
     }
+
+    function edit() {
+
+        var row = grid.getSelected();
+        if (row) {
+            mini.open({
+                url: "${ctx}/pages/yl/jzxxWindow",
+                title: "编辑就诊信息", width: 600, height: 400,
+                onload: function () {
+                    var iframe = this.getIFrameEl();
+                    var data = { action: "edit", id: row.id };
+                    iframe.contentWindow.SetData(data);
+
+                },
+                ondestroy: function (action) {
+                    //var iframe = this.getIFrameEl();
+
+                    grid.reload();
+
+                }
+            });
+
+        } else {
+            alert("请选中一条记录");
+        }
+    }
+
     function removeRow() {
         var rows = grid.getSelecteds();
         if (rows.length > 0) {
@@ -108,12 +134,6 @@
             );
         }
     }
-    function saveData() {
-        saveGrid(grid, {
-            url: "${ctx}/yl/jzxx/saveOrUpdateBatch"
-        });
-    }
-
 
     grid.on("celleditenter", function (e) {
         var index = grid.indexOf(e.record);
