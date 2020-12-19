@@ -16,5 +16,5 @@ public interface ExcelService {
      * 天石业务
      * @return
      */
-    Workbook tsyw(List<Map<String,Object>> files);
+    Workbook tsyw(MultipartFile[] files);
 }

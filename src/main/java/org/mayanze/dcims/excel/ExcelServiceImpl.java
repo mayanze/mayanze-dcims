@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * author: mayanze
@@ -31,16 +31,16 @@ public class ExcelServiceImpl implements ExcelService{
      */
     @SneakyThrows
     @Override
-    public Workbook tsyw(List<Map<String,Object>> files) {
+    public Workbook tsyw(MultipartFile[] files) {
         Workbook temp_wb = null;
         List<InputStream> source_inps = new ArrayList<>();
-        for (Map<String,Object> file : files) {//获取数据源excel和目标excel
-            String name = file.get("fileName")+"";
+        for (MultipartFile file : files) {//获取数据源excel和目标excel
+            String name = file.getOriginalFilename();
             if (targetExcelName.equals(name)) {//目标excel
-                InputStream temp_inp = (InputStream)file.get("inputStream");
+                InputStream temp_inp = file.getInputStream();
                 temp_wb = WorkbookFactory.create(temp_inp);
             } else {
-                source_inps.add((InputStream)file.get("inputStream"));
+                source_inps.add(file.getInputStream());
             }
         }
         Assert.notNull(temp_wb, "天石模板excel不能为空");
@@ -56,8 +56,8 @@ public class ExcelServiceImpl implements ExcelService{
             Row temp_row1 = temp_sheet.getRow(1);
             //寻找应该被复制到模板excel中的那几列
             List<Integer> tempHeadrsIndex = getHeadrIndex(temp_row1, tempHeadrs);
-            //寻找第一行数据样式
-            Row temp_row2 = temp_sheet.getRow(2);
+            //寻找第头部行的数据样式
+            Row temp_row2 = temp_sheet.getRow(1);
 
             if (headrIndex.size() != tempHeadrsIndex.size()) {
                 throw new RuntimeException("源数据需要复制列数，与模板被需要复制列数不匹配，请检查");
@@ -81,10 +81,20 @@ public class ExcelServiceImpl implements ExcelService{
                 Row tempRow = temp_sheet.createRow(temRowDataFirstIndex + i);//新追加数据行
 
                 //复制第一行的样式
-                tempRow.setHeight(temp_row2.getHeight());
+//                tempRow.setHeight(temp_row2.getHeight());
                 for (int j = 0; j < 11; j++) {//总共11列
                     Cell cell = tempRow.createCell(j);
-                    cell.setCellStyle(temp_row2.getCell(j).getCellStyle());
+
+                    CellStyle cellStyle = temp_wb.createCellStyle();;
+                    CellStyle head_cellStyle = temp_row2.getCell(j).getCellStyle();
+                    cellStyle.cloneStyleFrom(head_cellStyle);
+                    cellStyle.setWrapText(true);
+
+                    if(j == 2 || j == 3){//第二列和第三列左对齐
+                        cellStyle.setAlignment(HorizontalAlignment.LEFT);
+                    }
+
+                    cell.setCellStyle(cellStyle);
                     if (j == 0) {
                         Cell cellNo = tempRow.getCell(0);//序号
                         cellNo.setCellValue(i + 1);//设置序号i

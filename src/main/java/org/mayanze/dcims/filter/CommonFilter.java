@@ -29,6 +29,9 @@ public class CommonFilter implements Filter {
         String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
                 + request.getContextPath();
         request.setAttribute("ctx", basePath);
+//        request.setAttribute("ctx", "https://iot.sinotrans.com/iot/obor");
+        request.setAttribute("cdnctx", "https://uat.iot.sinotrans.com/iotcdn");
+        request.setAttribute("sys_version", Math.random());
         chain.doFilter(req, resp);
     }
 }
