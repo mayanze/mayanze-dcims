@@ -6,7 +6,7 @@ mayanze-dcims是根据"2019软件设计师"真题第3道大题所做的一套信
 看了[FreeMarker、Thymeleaf、Enjoy 模板引擎性能测试](https://www.ktanx.com/blog/p/4965)
 ,这篇文章，决定了选择FreeMarker
 
-### 演示地址
+### 演示地址(由于jQuery MiniUI是收费产品，后期将作为后台模块维护，次演示地址不再使用)
 [http://mayanze.com/dcims](http://mayanze.com/dcims)
 
 
@@ -45,5 +45,5 @@ mayanze-dcims是根据"2019软件设计师"真题第3道大题所做的一套信
 |
 
 ```
-由于jQuery MiniUI是收费产品，后期将不再更新维护
+由于jQuery MiniUI是收费产品，后期将作为后台模块维护
 
