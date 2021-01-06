@@ -21,7 +21,7 @@ import java.util.List;
 public class ExcelServiceImpl implements ExcelService{
 
     //数据头
-    private String[] dataHeadrs = {"询价商品名称", "规格描述", "询价品牌/制造商", "询价数量", "单位", "特殊要求"};
+    private String[] dataHeadrs = {"询价商品名称", "规格描述", "询价品牌", "询价数量", "单位", "特殊要求"};
     private String[] tempHeadrs = {"名称", "牌号、规格", "品牌", "数量", "单位", "备注说明"};
     private static final String targetExcelName = "天石模板.xlsx";
 

@@ -11,7 +11,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 15611930107abcD*
-    url: jdbc:mysql://47.105.130.251:3306/mayanze-dcims?useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/mayanze-dcims?useUnicode=true&characterEncoding=UTF-8
     hikari:
       max-lifetime: 600000
   #返回date给前端的格式化
