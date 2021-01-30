@@ -2,7 +2,13 @@ package org.mayanze.dcims.excel;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -23,7 +29,12 @@ public class ExcelServiceImpl implements ExcelService{
     //数据头
     private String[] dataHeadrs = {"询价商品名称", "规格描述", "询价品牌", "询价数量", "单位", "特殊要求"};
     private String[] tempHeadrs = {"名称", "牌号、规格", "品牌", "数量", "单位", "备注说明"};
-    private static final String targetExcelName = "天石模板.xlsx";
+    private String targetExcelName;
+
+    @Override
+    public String getTargetExcelName() {
+        return targetExcelName;
+    }
 
     /**
      * 天石业务
@@ -46,15 +57,17 @@ public class ExcelServiceImpl implements ExcelService{
     public Workbook tsyw(MultipartFile[] files) {
         Workbook temp_wb = null;
         List<InputStream> source_inps = new ArrayList<>();
-        for (MultipartFile file : files) {//获取数据源excel和目标excel
-            String name = file.getOriginalFilename();
-            if (targetExcelName.equals(name)) {//目标excel
+        for (int i = 0; i < files.length; i++) {//获取数据源excel和目标excel
+            MultipartFile file = files[i];
+            if(i == files.length-1){//最后一个文件为模板文件
+                targetExcelName = file.getOriginalFilename();
                 InputStream temp_inp = file.getInputStream();
                 temp_wb = WorkbookFactory.create(temp_inp);
-            } else {
+            }else {//剩下的都是数据文件
                 source_inps.add(file.getInputStream());
             }
         }
+
         Assert.notNull(temp_wb, "天石模板excel不能为空");
         Assert.notEmpty(source_inps, "数据excel不能为空");
         for (InputStream source_inp : source_inps) {//遍历数据源excel追加到目标源上

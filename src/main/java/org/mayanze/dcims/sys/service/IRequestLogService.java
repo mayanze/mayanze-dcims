@@ -13,4 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IRequestLogService extends IService<RequestLog> {
 
+    /**
+     * 保存请求日志
+     */
+    void saveLog(Object retVal);
+
 }

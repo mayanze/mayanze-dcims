@@ -17,4 +17,10 @@ public interface ExcelService {
      * @return
      */
     Workbook tsyw(MultipartFile[] files);
+
+    /**
+     * 获取模板文件名称
+     * @return
+     */
+    String getTargetExcelName();
 }

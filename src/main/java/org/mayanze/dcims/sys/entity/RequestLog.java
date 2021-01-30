@@ -46,7 +46,7 @@ public class RequestLog implements Serializable {
     /**
      * 请求时间
      */
-    private LocalDateTime requestCreateTime;
+    private LocalDateTime requestTime;
 
     /**
      * 效应消息
@@ -56,7 +56,7 @@ public class RequestLog implements Serializable {
     /**
      * ip地址
      */
-    private String requestIpAddress;
+    private String requestIp;
 
     /**
      * 请求参数
@@ -67,4 +67,9 @@ public class RequestLog implements Serializable {
      * 请求类型
      */
     private String requestMethod;
+
+    /**
+     * 请求耗时
+     */
+    private long time;
 }

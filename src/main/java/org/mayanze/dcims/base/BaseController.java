@@ -2,6 +2,8 @@ package org.mayanze.dcims.base;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import lombok.extern.slf4j.Slf4j;
 import org.mayanze.dcims.utils.BasePage;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,10 +27,12 @@ public class BaseController<S extends IService<T>,T> {
     private S iService;
 
     @GetMapping(value = "/queryPage",produces = MediaType.APPLICATION_JSON_VALUE)
-    public IPage<T> queryPage() {
-        BasePage<T> basePage = new BasePage<>();
-        BasePage<T> page = iService.page(basePage);
-        return page;
+    public WebResponse queryPage() {
+        Page<T> page = new Page();
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(OrderItem.desc("request_time"));
+        page.setOrders(orderItems);
+        return new WebResponse().success(iService.page(page));
     }
 
     @GetMapping(value = "/queryList",produces = MediaType.APPLICATION_JSON_VALUE)

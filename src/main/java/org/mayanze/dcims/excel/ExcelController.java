@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 
 /**
  * author: mayanze
@@ -52,7 +54,9 @@ public class ExcelController {
         //输出Excel文件
         OutputStream output = rep.getOutputStream();
         rep.reset();
-        String codedFileName = URLEncoder.encode("天石模板", "UTF-8");
+
+        String fileName = excelService.getTargetExcelName().substring(0, excelService.getTargetExcelName().lastIndexOf("."));
+        String codedFileName = URLEncoder.encode(fileName+ LocalDateTime.now().toString(), "UTF-8");
         rep.setHeader("Content-disposition", "attachment; filename=" + codedFileName + ".xlsx");
         rep.setContentType("application/x-xls");
         _workbook.write(output);
