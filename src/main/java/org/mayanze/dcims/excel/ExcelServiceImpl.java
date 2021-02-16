@@ -30,6 +30,7 @@ public class ExcelServiceImpl implements ExcelService{
     private String[] dataHeadrs = {"询价商品名称", "规格描述", "询价品牌", "询价数量", "单位", "特殊要求"};
     private String[] tempHeadrs = {"名称", "牌号、规格", "品牌", "数量", "单位", "备注说明"};
     private String targetExcelName;
+    private Integer appendFirstRow;//新追加数据的行下标
 
     @Override
     public String getTargetExcelName() {
@@ -115,7 +116,7 @@ public class ExcelServiceImpl implements ExcelService{
                 }
                 temRowDataFirstIndex++;//为新的一行数据做准备
             }
-
+            this.appendFirstRow = temRowDataFirstIndex;
             for (int i = 0; i < 10000; i++) {//最多获取10000行数据
                 Row dataRow = sheet.getRow(i + 11);//第12行开始是源数据行，下标需要从0开始需减1
                 if (dataRow == null) {//数据复制完之后跳出复制
@@ -153,7 +154,21 @@ public class ExcelServiceImpl implements ExcelService{
                 }
             }
         }
-
+        //自适应高度
+        Sheet sheetAt = temp_wb.getSheetAt(0);
+        for (int i = this.appendFirstRow+3; i <= sheetAt.getLastRowNum(); i++) {
+            Row row = sheetAt.getRow(i);
+            short lastCellNum = row.getLastCellNum();
+            int enterCnt = 0;
+            for (int j = 0; j < lastCellNum; j++) {
+                int rwsTemp = row.getCell(j).toString().getBytes().length;
+                if (rwsTemp > enterCnt) {
+                    enterCnt = rwsTemp;
+                }
+            }
+            int i1 = (int) Math.ceil((enterCnt / 12.0)) * 20;
+            row.setHeightInPoints(i1);
+        }
         return temp_wb;
     }
 
