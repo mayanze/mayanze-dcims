@@ -19,6 +19,12 @@ public interface ExcelService {
     Workbook tsyw(MultipartFile[] files);
 
     /**
+     * 天石业务-报价
+     * @return
+     */
+    Workbook tsyw_offter(MultipartFile[] files);
+
+    /**
      * 获取模板文件名称
      * @return
      */

@@ -18,6 +18,10 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 1000MB
 #mybatis-plus配置控制台打印完整带参数SQL语句
 mybatis-plus:
   configuration:

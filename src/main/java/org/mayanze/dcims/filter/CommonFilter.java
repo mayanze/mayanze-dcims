@@ -1,12 +1,8 @@
 package org.mayanze.dcims.filter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.mayanze.dcims.sys.entity.RequestLog;
 import org.mayanze.dcims.sys.service.IRequestLogService;
-import org.mayanze.dcims.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +11,6 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 @Slf4j
 @Component
@@ -41,36 +36,10 @@ public class CommonFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
-        reqLog(request,response);//记录请求日志
         String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
                 + request.getContextPath();
         request.setAttribute("ctx", basePath);
         request.setAttribute("sys_version", Math.random());
         chain.doFilter(req, resp);
-    }
-
-    /**
-     * 请求日志
-     * @param request
-     */
-    @SneakyThrows
-    public void reqLog(HttpServletRequest request, HttpServletResponse response){
-//        try {
-//            RequestLog requestLog = new RequestLog();
-//            requestLog.setRequestCreator("");
-//            requestLog.setRequestCreateTime(LocalDateTime.now());
-//            requestLog.setRequestUrl(request.getRequestURI());
-//            requestLog.setRequestMenu("");
-//            requestLog.setResponseMsg(response.getStatus()+"");
-//            requestLog.setRequestMethod(request.getMethod());
-//            String parmater = objectMapper.writeValueAsString(request.getParameterMap());
-//            if(request.getMethod().equals("POST")){
-//                parmater = RequestUtils.getLines(request);
-//            }
-//            requestLog.setRequestParmater(parmater);
-//            requestLogService.save(requestLog);
-//        } catch (Exception e) {
-//            log.error(e.getMessage());
-//        }
     }
 }
