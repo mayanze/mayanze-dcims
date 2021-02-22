@@ -198,7 +198,9 @@ public class ExcelServiceImpl implements ExcelService{
 
         Assert.notNull(offter_wb, "天石报价excel不能为空");
         Assert.notEmpty(source_inps, "数据excel不能为空");
-        for (InputStream source_inp : source_inps) {//遍历数据源excel追加到目标源上
+        //遍历数据源excel追加到目标源上
+        for (int k = 0; k < source_inps.size(); k++) {
+            InputStream source_inp = source_inps.get(k);
             Workbook wb = WorkbookFactory.create(source_inp);
             Sheet sheet = wb.getSheetAt(0);
             Row rowPart = null;//第一行，合并数据行部分
@@ -235,10 +237,13 @@ public class ExcelServiceImpl implements ExcelService{
                 Row dataRow = sheet.getRow(++dataRowNumStart);//数据行是头部行的下一行
                 if (dataRow == null) {//数据复制完之后跳出复制
                     //数据execl,有多个数据部分，一个部分完了后，隔了两个行会有新的部分，如果隔了两个行还没有新的部分则视为已经把数据读完
-                    Row newPartRow = sheet.getRow(dataRowNumStart + 2);
+                    Row newPartRow = sheet.getRow(++dataRowNumStart);
+                    if(newPartRow == null){//空一行没有数据找空两行
+                        newPartRow = sheet.getRow(++dataRowNumStart);
+                    }
                     if (newPartRow != null) {
                         rowPart = newPartRow;
-                        rowHead = sheet.getRow(dataRowNumStart + 3);
+                        rowHead = sheet.getRow(++dataRowNumStart);//头行在新部分的下一行
                     } else {
                         break;
                     }
@@ -323,8 +328,15 @@ public class ExcelServiceImpl implements ExcelService{
         String enquiry_name = "询价人姓名：";//中文冒号：
         int enquiry_name_start_index = stringCellValue.indexOf(enquiry_name) + enquiry_name.length();//询价人姓名值位置
         int enquiry_name_end_index = stringCellValue.indexOf(" ",enquiry_name_start_index);//询价人姓名值之后空格位置
+        for (int i = 0; i < 100; i++) {
+            if(enquiry_name_start_index == enquiry_name_end_index){//如果结果等于开始，说明姓名后面是有空格的加一再去找
+                enquiry_name_end_index = stringCellValue.indexOf(" ",++enquiry_name_start_index);
+            }else {
+                break;
+            }
+        }
         String enquiry_name_value = stringCellValue.substring(enquiry_name_start_index,enquiry_name_end_index);//询价人姓名值
-        return enquiry_name_value;
+        return enquiry_name_value.trim();
     }
 
     /**
@@ -338,8 +350,17 @@ public class ExcelServiceImpl implements ExcelService{
         String enquiry_no = "询价单编号：";//中文冒号：
         int enquiry_no_start_index = stringCellValue.indexOf(enquiry_no) + enquiry_no.length();//询价单编号值位置
         int enquiry_no_end_index = stringCellValue.indexOf("（",enquiry_no_start_index);//询价单编号值之后中文括号位置
+        for (int i = 0; i < 100; i++) {
+            if(enquiry_no_start_index == enquiry_no_end_index){//如果结果等于开始，说明在值前面是有空格的加一再去找
+                enquiry_no_end_index = stringCellValue.indexOf("（",++enquiry_no_start_index);
+            }else if(enquiry_no_end_index < enquiry_no_start_index){
+                enquiry_no_end_index = stringCellValue.indexOf("(",++enquiry_no_start_index);
+            }else {
+                break;
+            }
+        }
         String enquiry_no_value = stringCellValue.substring(enquiry_no_start_index,enquiry_no_end_index);//询价人姓名值
-        return enquiry_no_value;
+        return enquiry_no_value.trim();
     }
 
     /**
@@ -353,10 +374,19 @@ public class ExcelServiceImpl implements ExcelService{
         String quotation = "截止报价：";//中文冒号：
         int quotation_start_index = stringCellValue.indexOf(quotation) + quotation.length();//询价单编号值位置
         int quotation_end_index = stringCellValue.indexOf("（",quotation_start_index);//询价单编号值之后中文括号位置
+        for (int i = 0; i < 100; i++) {
+            if(quotation_start_index == quotation_end_index){//如果结果等于开始，说明在值前面是有空格的加一再去找
+                quotation_end_index = stringCellValue.indexOf("（",++quotation_start_index);
+            }else if(quotation_end_index < quotation_start_index){
+                quotation_end_index = stringCellValue.indexOf("(",++quotation_start_index);
+            }else {
+                break;
+            }
+        }
         String quotation_value = stringCellValue.substring(quotation_start_index,quotation_end_index);//询价人姓名值
         String[] split = quotation_value.split("-");
         quotation_value = split[0]+"年"+split[1]+"月"+split[2]+"日";//日期格式化为，年月日(加汉字)
-        return quotation_value;
+        return quotation_value.trim();
     }
 
     /**
