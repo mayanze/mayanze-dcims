@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -102,7 +103,7 @@ public class ExcelServiceImpl implements ExcelService{
                         10  //last column  (0-based)
                 ));
                 Cell mergedCell = mergedTempRow.getCell(0);
-                mergedCell.setCellValue("询价单编号：     询价人姓名：     截止报价：");
+                mergedCell.setCellValue("询价单编号：（）     询价人姓名：     截止报价：（）");
 
                 //复制一行列头
                 temRowDataFirstIndex++;
@@ -147,27 +148,30 @@ public class ExcelServiceImpl implements ExcelService{
                 //复制数据
                 for (int i1 = 0; i1 < headrIndex.size(); i1++) {
                     Cell cell = dataRow.getCell(headrIndex.get(i1));
+                    if(StringUtils.isEmpty(cell.getStringCellValue()) && i1 == 2){//询价品牌如果为空，拿下一列【询价制造商】的值代替
+                        cell = dataRow.getCell(headrIndex.get(i1)+1);
+                    }
                     Cell cell1 = tempRow.getCell(tempHeadrsIndex.get(i1));
                     cell1.setCellValue(cell.getStringCellValue());
                 }
             }
         }
         //自适应高度
-        Sheet sheetAt = temp_wb.getSheetAt(0);
-        for (int i = this.appendFirstRow+3; i <= sheetAt.getLastRowNum(); i++) {
-            Row row = sheetAt.getRow(i);
-            short lastCellNum = row.getLastCellNum();
-            float height = 0;
-            for (int j = 0; j < lastCellNum; j++) {
-                int rowBytesLength = row.getCell(j).toString().getBytes().length;
-                double floor = Math.floor(sheetAt.getColumnWidthInPixels(row.getCell(j).getColumnIndex()));
-                float rowHeight = (float)Math.ceil(rowBytesLength / floor);
-                if (rowHeight > height) {
-                    height = rowHeight;
-                }
-            }
-            row.setHeightInPoints(height*20);
-        }
+//        Sheet sheetAt = temp_wb.getSheetAt(0);
+//        for (int i = this.appendFirstRow+3; i <= sheetAt.getLastRowNum(); i++) {
+//            Row row = sheetAt.getRow(i);
+//            short lastCellNum = row.getLastCellNum();
+//            float height = 0;
+//            for (int j = 0; j < lastCellNum; j++) {
+//                int rowBytesLength = row.getCell(j).toString().getBytes().length;
+//                double floor = Math.floor(sheetAt.getColumnWidthInPixels(row.getCell(j).getColumnIndex()));
+//                float rowHeight = (float)Math.ceil(rowBytesLength / floor);
+//                if (rowHeight > height) {
+//                    height = rowHeight;
+//                }
+//            }
+//            row.setHeightInPoints(height*20);
+//        }
         return temp_wb;
     }
 
