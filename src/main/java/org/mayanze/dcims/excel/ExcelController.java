@@ -58,7 +58,7 @@ public class ExcelController {
 
         String fileName = excelService.getTargetExcelName().substring(0, excelService.getTargetExcelName().lastIndexOf("."));
         String codedFileName = URLEncoder.encode(fileName+ LocalDateTime.now().toString(), "UTF-8");
-        rep.setHeader("Content-disposition", "attachment; filename=" + codedFileName + ".xls");
+        rep.setHeader("Content-disposition", "attachment; filename=" + codedFileName + ".xlsx");
         rep.setContentType("application/x-xls");
         _workbook.write(output);
         output.close();

@@ -2,6 +2,7 @@ package org.mayanze.dcims.excel;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,6 +113,7 @@ public class ExcelServiceImpl implements ExcelService{
                 for (int i = 0; i < 11; i++) {
                     Cell cell = tempNewHeardRow.createCell(i);
                     cell.setCellStyle(temp_row1.getCell(i).getCellStyle());//复制头样式
+                    cell.setCellType(CellType.STRING);
                     cell.setCellValue(temp_row1.getCell(i).getStringCellValue());//复制头值
                 }
                 temRowDataFirstIndex++;//为新的一行数据做准备
@@ -148,10 +151,12 @@ public class ExcelServiceImpl implements ExcelService{
                 //复制数据
                 for (int i1 = 0; i1 < headrIndex.size(); i1++) {
                     Cell cell = dataRow.getCell(headrIndex.get(i1));
+                    cell.setCellType(CellType.STRING);
                     if(StringUtils.isEmpty(cell.getStringCellValue()) && i1 == 2){//询价品牌如果为空，拿下一列【询价制造商】的值代替
                         cell = dataRow.getCell(headrIndex.get(i1)+1);
                     }
                     Cell cell1 = tempRow.getCell(tempHeadrsIndex.get(i1));
+                    cell.setCellType(CellType.STRING);
                     cell1.setCellValue(cell.getStringCellValue());
                 }
             }
@@ -204,118 +209,123 @@ public class ExcelServiceImpl implements ExcelService{
         Assert.notEmpty(source_inps, "数据excel不能为空");
         //遍历数据源excel追加到目标源上
         for (int k = 0; k < source_inps.size(); k++) {
-            InputStream source_inp = source_inps.get(k);
-            Workbook wb = WorkbookFactory.create(source_inp);
-            Sheet sheet = wb.getSheetAt(0);
-            Row rowPart = null;//第一行，合并数据行部分
-            Row rowHead = null;//数据头部分
-            Sheet offter_sheet = null;//报价sheet
-            int dataRowNumStart = 0;//数据行开始部分
-            int temRowDataFirstIndex = 0;//模板excel从第几行开始追加数据
-            List<Integer> headrIndex = new ArrayList<>();//寻找数据源excel需要复制的数据在那几列
-            List<Integer> tempHeadrsIndex = new ArrayList<>();//寻找应该被复制到模板excel中的那几列
-            String enquiry_name_value = "";//询价人姓名
-            String quotation_value = "";//截止报价
-            String enquiry_no_value = "";//询价单编号
-            for (int i = 0; i < 65535; i++) {//最多获取65535行数据,//第2行开始是源数据头部分行，下标需要从0开始需减1
-                if(i == 0){
-                    rowPart = sheet.getRow(i);
-                    rowHead = sheet.getRow(1);//数据列头所在行
-                    //寻找数据源excel需要复制的数据在那几列
-                    headrIndex = getHeadrIndex(rowHead, offter_dataHeadrs);
-                    enquiry_no_value = getEnquiry_no_value(rowPart);//询价单编号
-                    quotation_value = getQuotation_value(rowPart);//截止报价
-                    // 根据数据execl询价人姓名找到报价execl中的sheet
-                    enquiry_name_value = getEnquiry_name_value(rowPart);
-                    offter_sheet = offter_wb.getSheet(enquiry_name_value);
-                    //寻找头部行
-                    Row offter_row2 = offter_sheet.getRow(0);
-                    //寻找应该被复制到模板excel中的那几列
-                    tempHeadrsIndex = getHeadrIndex(offter_row2, offter_tempHeadrs);
-                    temRowDataFirstIndex = offter_sheet.getLastRowNum();//模板excel从第几行开始追加数据,最后一行加1
-                    if (headrIndex.size() + 3 != tempHeadrsIndex.size()) {//数据中有3列取得是合并单元格的值
-                        throw new RuntimeException("源数据需要复制列数，与模板被需要复制列数不匹配，请检查");
+            try {
+                InputStream source_inp = source_inps.get(k);
+                Workbook wb = WorkbookFactory.create(source_inp);
+                Sheet sheet = wb.getSheetAt(0);
+                Row rowPart = null;//第一行，合并数据行部分
+                Row rowHead = null;//数据头部分
+                Sheet offter_sheet = null;//报价sheet
+                int dataRowNumStart = 0;//数据行开始部分
+                int temRowDataFirstIndex = 0;//模板excel从第几行开始追加数据
+                List<Integer> headrIndex = new ArrayList<>();//寻找数据源excel需要复制的数据在那几列
+                List<Integer> tempHeadrsIndex = new ArrayList<>();//寻找应该被复制到模板excel中的那几列
+                String enquiry_name_value = "";//询价人姓名
+                String quotation_value = "";//截止报价
+                String enquiry_no_value = "";//询价单编号
+                for (int i = 0; i < 65535; i++) {//最多获取65535行数据,//第2行开始是源数据头部分行，下标需要从0开始需减1
+                    if(i == 0){
+                        rowPart = sheet.getRow(i);
+                        rowHead = sheet.getRow(1);//数据列头所在行
+                        //寻找数据源excel需要复制的数据在那几列
+                        headrIndex = getHeadrIndex(rowHead, offter_dataHeadrs);
+                        enquiry_no_value = getEnquiry_no_value(rowPart);//询价单编号
+                        quotation_value = getQuotation_value(rowPart);//截止报价
+                        // 根据数据execl询价人姓名找到报价execl中的sheet
+                        enquiry_name_value = getEnquiry_name_value(rowPart);
+                        offter_sheet = offter_wb.getSheet(enquiry_name_value);
+                        //寻找头部行
+                        Row offter_row2 = offter_sheet.getRow(0);
+                        //寻找应该被复制到模板excel中的那几列
+                        tempHeadrsIndex = getHeadrIndex(offter_row2, offter_tempHeadrs);
+                        temRowDataFirstIndex = offter_sheet.getLastRowNum();//模板excel从第几行开始追加数据,最后一行加1
+                        if (headrIndex.size() + 3 != tempHeadrsIndex.size()) {//数据中有3列取得是合并单元格的值
+                            throw new RuntimeException("源数据需要复制列数，与模板被需要复制列数不匹配，请检查");
+                        }
+                        dataRowNumStart = rowHead.getRowNum();
                     }
-                    dataRowNumStart = rowHead.getRowNum();
-                }
-                Row dataRow = sheet.getRow(++dataRowNumStart);//数据行是头部行的下一行
-                if (dataRow == null) {//数据复制完之后跳出复制
-                    //数据execl,有多个数据部分，一个部分完了后，隔了两个行会有新的部分，如果隔了两个行还没有新的部分则视为已经把数据读完
-                    Row newPartRow = sheet.getRow(++dataRowNumStart);
-                    if(newPartRow == null){//空一行没有数据找空两行
-                        newPartRow = sheet.getRow(++dataRowNumStart);
-                    }
-                    if (newPartRow != null) {
-                        rowPart = newPartRow;
-                        rowHead = sheet.getRow(++dataRowNumStart);//头行在新部分的下一行
-                    } else {
-                        break;
-                    }
-                    //寻找数据源excel需要复制的数据在那几列
-                    headrIndex = getHeadrIndex(rowHead, offter_dataHeadrs);
-                    enquiry_no_value = getEnquiry_no_value(rowPart);//询价单编号
-                    quotation_value = getQuotation_value(rowPart);//截止报价
-                    // 根据数据execl询价人姓名找到报价execl中的sheet
-                    enquiry_name_value = getEnquiry_name_value(rowPart);
-                    offter_sheet = offter_wb.getSheet(enquiry_name_value);
-                    //寻找头部行
-                    Row offter_row2 = offter_sheet.getRow(0);
-                    //寻找应该被复制到模板excel中的那几列
-                    tempHeadrsIndex = getHeadrIndex(offter_row2, offter_tempHeadrs);
-                    temRowDataFirstIndex = offter_sheet.getLastRowNum();//模板excel从第几行开始追加数据,最后一行加1
-                    if (headrIndex.size() + 3 != tempHeadrsIndex.size()) {//数据中有3列取得是合并单元格的值
-                        throw new RuntimeException("源数据需要复制列数，与模板被需要复制列数不匹配，请检查");
-                    }
-                    dataRowNumStart = rowHead.getRowNum();
-                    continue;
-                }
-                Row tempRow = offter_sheet.createRow(++temRowDataFirstIndex);//新追加数据行
-                //复制之前最后一行的样式
-                for (int j = 0; j < 8; j++) {//总共8列
-                    Cell cell = tempRow.createCell(j);
-
-                    CellStyle cellStyle = offter_wb.createCellStyle();;
-                    CellStyle head_cellStyle = offter_sheet.getRow(temRowDataFirstIndex).getCell(j).getCellStyle();
-                    cellStyle.cloneStyleFrom(head_cellStyle);
-                    cellStyle.setWrapText(true);
-
-                    cellStyle.setBorderBottom(BorderStyle.THIN);
-                    cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-                    cellStyle.setBorderLeft(BorderStyle.THIN);
-                    cellStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-                    cellStyle.setBorderRight(BorderStyle.THIN);
-                    cellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
-                    cellStyle.setBorderTop(BorderStyle.THIN);
-                    cellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
-
-                    if(j == 3 || j == 4){//第四列和第五列左对齐
-                        cellStyle.setAlignment(HorizontalAlignment.LEFT);
-                    }else {
-                        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-                    }
-                    cell.setCellStyle(cellStyle);
-                }
-
-                //复制数据
-                for (int i1 = 0; i1 < tempHeadrsIndex.size(); i1++) {
-                    Cell cell1 = tempRow.getCell(tempHeadrsIndex.get(i1));
-                    switch (i1){
-                        case 0://姓名
-                            cell1.setCellValue(enquiry_name_value);
+                    Row dataRow = sheet.getRow(++dataRowNumStart);//数据行是头部行的下一行
+                    if (dataRow == null) {//数据复制完之后跳出复制
+                        //数据execl,有多个数据部分，一个部分完了后，隔了两个行会有新的部分，如果隔了两个行还没有新的部分则视为已经把数据读完
+                        Row newPartRow = sheet.getRow(++dataRowNumStart);
+                        if(newPartRow == null){//空一行没有数据找空两行
+                            newPartRow = sheet.getRow(++dataRowNumStart);
+                        }
+                        if (newPartRow != null) {
+                            rowPart = newPartRow;
+                            rowHead = sheet.getRow(++dataRowNumStart);//头行在新部分的下一行
+                        } else {
                             break;
-                        case 1://时间
-                            cell1.setCellValue(quotation_value);
-                            break;
-                        case 2://询价单编号
-                            cell1.setCellValue(enquiry_no_value);
-                            break;
-                        default:
-                            Cell cell = dataRow.getCell(headrIndex.get(i1-3));//数据中有3列取得是合并单元格的值
-                            cell1.setCellValue(cell.getStringCellValue());
-                            break;
+                        }
+                        //寻找数据源excel需要复制的数据在那几列
+                        headrIndex = getHeadrIndex(rowHead, offter_dataHeadrs);
+                        enquiry_no_value = getEnquiry_no_value(rowPart);//询价单编号
+                        quotation_value = getQuotation_value(rowPart);//截止报价
+                        // 根据数据execl询价人姓名找到报价execl中的sheet
+                        enquiry_name_value = getEnquiry_name_value(rowPart);
+                        offter_sheet = offter_wb.getSheet(enquiry_name_value);
+                        //寻找头部行
+                        Row offter_row2 = offter_sheet.getRow(0);
+                        //寻找应该被复制到模板excel中的那几列
+                        tempHeadrsIndex = getHeadrIndex(offter_row2, offter_tempHeadrs);
+                        temRowDataFirstIndex = offter_sheet.getLastRowNum();//模板excel从第几行开始追加数据,最后一行加1
+                        if (headrIndex.size() + 3 != tempHeadrsIndex.size()) {//数据中有3列取得是合并单元格的值
+                            throw new RuntimeException("源数据需要复制列数，与模板被需要复制列数不匹配，请检查");
+                        }
+                        dataRowNumStart = rowHead.getRowNum();
+                        continue;
+                    }
+                    Row tempRow = offter_sheet.createRow(++temRowDataFirstIndex);//新追加数据行
+                    //复制之前最后一行的样式
+                    for (int j = 0; j < 8; j++) {//总共8列
+                        Cell cell = tempRow.createCell(j);
 
+                        CellStyle cellStyle = offter_wb.createCellStyle();;
+                        CellStyle head_cellStyle = offter_sheet.getRow(temRowDataFirstIndex).getCell(j).getCellStyle();
+                        cellStyle.cloneStyleFrom(head_cellStyle);
+                        cellStyle.setWrapText(true);
+
+                        cellStyle.setBorderBottom(BorderStyle.THIN);
+                        cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+                        cellStyle.setBorderLeft(BorderStyle.THIN);
+                        cellStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+                        cellStyle.setBorderRight(BorderStyle.THIN);
+                        cellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+                        cellStyle.setBorderTop(BorderStyle.THIN);
+                        cellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+
+                        if(j == 3 || j == 4){//第四列和第五列左对齐
+                            cellStyle.setAlignment(HorizontalAlignment.LEFT);
+                        }else {
+                            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+                        }
+                        cell.setCellStyle(cellStyle);
+                    }
+
+                    //复制数据
+                    for (int i1 = 0; i1 < tempHeadrsIndex.size(); i1++) {
+                        Cell cell1 = tempRow.getCell(tempHeadrsIndex.get(i1));
+                        switch (i1){
+                            case 0://姓名
+                                cell1.setCellValue(enquiry_name_value);
+                                break;
+                            case 1://时间
+                                cell1.setCellValue(quotation_value);
+                                break;
+                            case 2://询价单编号
+                                cell1.setCellValue(enquiry_no_value);
+                                break;
+                            default:
+                                Cell cell = dataRow.getCell(headrIndex.get(i1-3));//数据中有3列取得是合并单元格的值
+                                cell.setCellType(CellType.STRING);
+                                cell1.setCellValue(cell.getStringCellValue());
+                                break;
+
+                        }
                     }
                 }
+            } catch (Exception e) {
+                throw new RuntimeException("第"+k+"个数据文件出错",e);
             }
         }
         return offter_wb;
@@ -328,6 +338,7 @@ public class ExcelServiceImpl implements ExcelService{
      * @return
      */
     private String getEnquiry_name_value(Row rowPart) {
+        rowPart.getCell(0).setCellType(CellType.STRING);
         String stringCellValue = rowPart.getCell(0).getStringCellValue();
         String enquiry_name = "询价人姓名：";//中文冒号：
         int enquiry_name_start_index = stringCellValue.indexOf(enquiry_name) + enquiry_name.length();//询价人姓名值位置
@@ -350,6 +361,7 @@ public class ExcelServiceImpl implements ExcelService{
      * @return
      */
     private String getEnquiry_no_value(Row rowPart) {
+        rowPart.getCell(0).setCellType(CellType.STRING);
         String stringCellValue = rowPart.getCell(0).getStringCellValue();
         String enquiry_no = "询价单编号：";//中文冒号：
         int enquiry_no_start_index = stringCellValue.indexOf(enquiry_no) + enquiry_no.length();//询价单编号值位置
@@ -374,6 +386,7 @@ public class ExcelServiceImpl implements ExcelService{
      * @return
      */
     private String getQuotation_value(Row rowPart) {
+        rowPart.getCell(0).setCellType(CellType.STRING);
         String stringCellValue = rowPart.getCell(0).getStringCellValue();
         String quotation = "截止报价：";//中文冒号：
         int quotation_start_index = stringCellValue.indexOf(quotation) + quotation.length();//询价单编号值位置
