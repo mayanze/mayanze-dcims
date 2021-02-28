@@ -325,7 +325,7 @@ public class ExcelServiceImpl implements ExcelService{
                     }
                 }
             } catch (Exception e) {
-                throw new RuntimeException("第"+k+"个数据文件出错",e);
+                throw new RuntimeException(String.format("第%s个数据文件出错；%s",k+1,e.getMessage()),e);
             }
         }
         return offter_wb;
@@ -343,14 +343,22 @@ public class ExcelServiceImpl implements ExcelService{
         String enquiry_name = "询价人姓名：";//中文冒号：
         int enquiry_name_start_index = stringCellValue.indexOf(enquiry_name) + enquiry_name.length();//询价人姓名值位置
         int enquiry_name_end_index = stringCellValue.indexOf(" ",enquiry_name_start_index);//询价人姓名值之后空格位置
-        for (int i = 0; i < 100; i++) {
-            if(enquiry_name_start_index == enquiry_name_end_index){//如果结果等于开始，说明姓名后面是有空格的加一再去找
-                enquiry_name_end_index = stringCellValue.indexOf(" ",++enquiry_name_start_index);
-            }else {
-                break;
-            }
+        if(enquiry_name_start_index < 0 || enquiry_name_end_index < 0){
+            throw new RuntimeException(String.format("第%s行，询价人姓名获取错误，请检查",rowPart.getRowNum()+1));
         }
         String enquiry_name_value = stringCellValue.substring(enquiry_name_start_index,enquiry_name_end_index);//询价人姓名值
+        if(StringUtils.isEmpty(enquiry_name_value.trim())){
+            for (int i = 0; i < 10; i++) {
+                enquiry_name_end_index = stringCellValue.indexOf(" ",++enquiry_name_start_index);
+                enquiry_name_value = stringCellValue.substring(enquiry_name_start_index,enquiry_name_end_index);
+                if(!StringUtils.isEmpty(enquiry_name_value.trim())){
+                    break;
+                }
+            }
+        }
+        if(StringUtils.isEmpty(enquiry_name_value.trim())){
+            throw new RuntimeException(String.format("第%s行，询价人姓名获取错误，请检查",rowPart.getRowNum()+1));
+        }
         return enquiry_name_value.trim();
     }
 
@@ -366,14 +374,11 @@ public class ExcelServiceImpl implements ExcelService{
         String enquiry_no = "询价单编号：";//中文冒号：
         int enquiry_no_start_index = stringCellValue.indexOf(enquiry_no) + enquiry_no.length();//询价单编号值位置
         int enquiry_no_end_index = stringCellValue.indexOf("（",enquiry_no_start_index);//询价单编号值之后中文括号位置
-        for (int i = 0; i < 100; i++) {
-            if(enquiry_no_start_index == enquiry_no_end_index){//如果结果等于开始，说明在值前面是有空格的加一再去找
-                enquiry_no_end_index = stringCellValue.indexOf("（",++enquiry_no_start_index);
-            }else if(enquiry_no_end_index < enquiry_no_start_index){
-                enquiry_no_end_index = stringCellValue.indexOf("(",++enquiry_no_start_index);
-            }else {
-                break;
-            }
+        if(enquiry_no_end_index < 0){//中文括号获取不到，使用英文括号
+            enquiry_no_end_index = stringCellValue.indexOf("(",enquiry_no_start_index);
+        }
+        if(enquiry_no_start_index == enquiry_no_end_index || enquiry_no_start_index < 0 || enquiry_no_end_index < 0){
+            throw new RuntimeException(String.format("第%s行，询价单编号获取错误，请检查",rowPart.getRowNum()+1));
         }
         String enquiry_no_value = stringCellValue.substring(enquiry_no_start_index,enquiry_no_end_index);//询价人姓名值
         return enquiry_no_value.trim();
@@ -391,14 +396,11 @@ public class ExcelServiceImpl implements ExcelService{
         String quotation = "截止报价：";//中文冒号：
         int quotation_start_index = stringCellValue.indexOf(quotation) + quotation.length();//询价单编号值位置
         int quotation_end_index = stringCellValue.indexOf("（",quotation_start_index);//询价单编号值之后中文括号位置
-        for (int i = 0; i < 100; i++) {
-            if(quotation_start_index == quotation_end_index){//如果结果等于开始，说明在值前面是有空格的加一再去找
-                quotation_end_index = stringCellValue.indexOf("（",++quotation_start_index);
-            }else if(quotation_end_index < quotation_start_index){
-                quotation_end_index = stringCellValue.indexOf("(",++quotation_start_index);
-            }else {
-                break;
-            }
+        if(quotation_end_index < 0){//中文括号获取不到，使用英文括号
+            quotation_end_index = stringCellValue.indexOf("(",quotation_end_index);
+        }
+        if(quotation_start_index == quotation_end_index || quotation_start_index < 0 || quotation_end_index < 0){
+            throw new RuntimeException(String.format("第%s行，截止报价获取错误，请检查",rowPart.getRowNum()+1));
         }
         String quotation_value = stringCellValue.substring(quotation_start_index,quotation_end_index);//询价人姓名值
         String[] split = quotation_value.split("-");
