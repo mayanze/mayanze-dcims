@@ -316,11 +316,20 @@ public class ExcelServiceImpl implements ExcelService{
                                 cell1.setCellValue(enquiry_no_value);
                                 break;
                             default:
-                                Cell cell = dataRow.getCell(headrIndex.get(i1-3));//数据中有3列取得是合并单元格的值
+                                //模板中中前3列取得是，数据excel合并成一行单元格的值，模板第四列才对应数据表格部分第一列
+                                int j = i1-3;
+                                Cell cell = dataRow.getCell(headrIndex.get(j));
                                 cell.setCellType(CellType.STRING);
-                                cell1.setCellValue(cell.getStringCellValue());
+                                String cellValue = cell.getStringCellValue();
+                                //备注说明有值，分号隔开追加到【牌号、规格里】面
+                                if (i1 == 4) {
+                                    String remarks = dataRow.getCell(headrIndex.get(j) + 2).getStringCellValue();
+                                    if(!StringUtils.isEmpty(remarks)){
+                                        cellValue = cellValue + ";" + remarks;
+                                    }
+                                }
+                                cell1.setCellValue(cellValue);
                                 break;
-
                         }
                     }
                 }
