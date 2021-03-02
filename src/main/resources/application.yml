@@ -6,6 +6,11 @@ server:
     context-path: /dcims
   tomcat:
     uri-encoding: utf-8
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-exception: true
+    include-stacktrace: always
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

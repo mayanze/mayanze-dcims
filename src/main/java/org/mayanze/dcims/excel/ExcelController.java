@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,7 +73,7 @@ public class ExcelController {
      * @param files
      */
     @SneakyThrows
-    @PostMapping("/tsyw_offter")
+    @PostMapping(value = "/tsyw_offter",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void tsyw_offter(HttpServletRequest req, HttpServletResponse rep, @RequestParam("file") MultipartFile[] files) {
         Workbook workbook = excelService.tsyw_offter(files);
         _offter_workbook = workbook;
