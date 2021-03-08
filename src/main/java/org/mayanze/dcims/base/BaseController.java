@@ -36,7 +36,8 @@ public class BaseController<S extends IService<T>, T> {
         if(!StringUtils.isEmpty(lines)){
             page = JSON.parseObject(lines, page.getClass());
         }
-        return new WebResponse().success(iService.page(page));
+        QueryWrapper queryWrapper = getQueryWrapper1(lines);
+        return new WebResponse().success(iService.page(page, queryWrapper));
     }
 
     @GetMapping(value = "/queryList", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -46,6 +47,11 @@ public class BaseController<S extends IService<T>, T> {
 
     @PostMapping(value = "/queryCount", produces = MediaType.APPLICATION_JSON_VALUE)
     public WebResponse queryCount(HttpServletRequest request) {
+        QueryWrapper queryWrapper = getQueryWrapper(request);
+        return new WebResponse().success(iService.count(queryWrapper));
+    }
+
+    private QueryWrapper getQueryWrapper(HttpServletRequest request) {
         QueryWrapper queryWrapper = new QueryWrapper<>();
         String lines = RequestUtils.getLines(request);
         if(!StringUtils.isEmpty(lines)){
@@ -55,10 +61,32 @@ public class BaseController<S extends IService<T>, T> {
                     case "eq":
                         queryWrapper.eq(jsonObject.getString("column"),jsonObject.get("val"));
                         break;
+
                 }
             }
         }
-        return new WebResponse().success(iService.count(queryWrapper));
+        return queryWrapper;
+    }
+
+    private QueryWrapper getQueryWrapper1(String lines) {
+        QueryWrapper queryWrapper = new QueryWrapper<>();
+        if(!StringUtils.isEmpty(lines)){
+            JSONObject query = JSON.parseObject(lines, JSONObject.class);
+            List<JSONObject> jsonObjects = JSON.parseArray(query.getString("condition"), JSONObject.class);
+            for (JSONObject jsonObject : jsonObjects) {
+                switch (jsonObject.getString("expression")){
+                    case "eq":
+                        queryWrapper.eq(jsonObject.getString("column"),jsonObject.get("val"));
+                        break;
+                    case "like":
+                        if(jsonObject.get("val") != null){
+                            queryWrapper.like(jsonObject.getString("column"),jsonObject.get("val"));
+                        }
+                        break;
+                }
+            }
+        }
+        return queryWrapper;
     }
 
     @GetMapping(value = "/getById", produces = MediaType.APPLICATION_JSON_VALUE)

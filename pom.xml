@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.mayanze</groupId>
-    <artifactId>dcims</artifactId>
+    <artifactId>mayanze-dcims</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mayanze-dcims</name>
     <description>Dental Clinic information Management system</description>
