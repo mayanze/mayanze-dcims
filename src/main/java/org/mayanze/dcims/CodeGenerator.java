@@ -51,7 +51,7 @@ public class CodeGenerator {
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        String projectPath = System.getProperty("user.dir");
+        String projectPath = System.getProperty("user.dir") + "/mayanze-dcims";
         gc.setOutputDir(projectPath + "/src/main/java");
         gc.setAuthor("mayanze");
         gc.setOpen(false);

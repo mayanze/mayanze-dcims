@@ -319,7 +319,11 @@ public class ExcelServiceImpl implements ExcelService{
                                 //模板中中前3列取得是，数据excel合并成一行单元格的值，模板第四列才对应数据表格部分第一列
                                 int j = i1-3;
                                 Cell cell = dataRow.getCell(headrIndex.get(j));
-                                cell.setCellType(CellType.STRING);
+                                try {
+                                    cell.setCellType(CellType.STRING);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 String cellValue = cell.getStringCellValue();
                                 //备注说明有值，分号隔开追加到【牌号、规格里】面
                                 if (i1 == 4) {

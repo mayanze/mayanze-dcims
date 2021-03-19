@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 用户表
+ * 
  * </p>
  *
  * @author mayanze
@@ -18,43 +18,16 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class User implements Serializable {
+public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
+    /**
+     * 角色名称
+     */
     private String name;
-
-    /**
-     * 性别：1：男，2：女
-     */
-    private Integer sex;
-
-    /**
-     * 角色ID
-     */
-    private String roleId;
-
-    /**
-     * 组织ID
-     */
-    private String orgId;
-
-    /**
-     * 电话
-     */
-    private String phone;
-
-    /**
-     * 邮箱
-     */
-    private String email;
-
-    /**
-     * 状态：1：启用，0：停用
-     */
-    private Integer status;
 
     /**
      * 创建时间
@@ -62,7 +35,7 @@ public class User implements Serializable {
     private LocalDateTime createTime;
 
     /**
-     * 备注
+     * 备注（角色描述）
      */
     private String remarks;
 

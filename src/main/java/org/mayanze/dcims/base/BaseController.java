@@ -72,6 +72,9 @@ public class BaseController<S extends IService<T>, T> {
         QueryWrapper queryWrapper = new QueryWrapper<>();
         if(!StringUtils.isEmpty(lines)){
             JSONObject query = JSON.parseObject(lines, JSONObject.class);
+            if(query.getString("condition") == null){
+                return queryWrapper;
+            }
             List<JSONObject> jsonObjects = JSON.parseArray(query.getString("condition"), JSONObject.class);
             for (JSONObject jsonObject : jsonObjects) {
                 switch (jsonObject.getString("expression")){

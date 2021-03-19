@@ -31,3 +31,6 @@ spring:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#请求日志忽略项
+requestLog:
+    ignores: request-log

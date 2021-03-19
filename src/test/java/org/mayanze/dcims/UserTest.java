@@ -40,7 +40,6 @@ public class UserTest {
     @Test
     public void testInsert(){
         User user = new User();
-        user.setCode("mayanze");
         user.setName("马艳泽");
 //        user.setRoleId();
         int insert = userMapper.insert(user);

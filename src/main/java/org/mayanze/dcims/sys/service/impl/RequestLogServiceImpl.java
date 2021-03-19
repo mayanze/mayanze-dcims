@@ -6,6 +6,7 @@ import org.mayanze.dcims.sys.entity.RequestLog;
 import org.mayanze.dcims.sys.mapper.RequestLogMapper;
 import org.mayanze.dcims.sys.service.IRequestLogService;
 import org.mayanze.dcims.utils.RequestUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -29,6 +30,9 @@ public class RequestLogServiceImpl extends ServiceImpl<RequestLogMapper, Request
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    @Value("${requestLog.ignores}")
+    private String ignores;// 忽略项
+
     /**
      * 记录日志
      *
@@ -40,7 +44,11 @@ public class RequestLogServiceImpl extends ServiceImpl<RequestLogMapper, Request
         HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
         String currentTimeMillis = request.getAttribute("currentTimeMillis").toString();
         try {
-
+            for (String ignore : ignores.split(",")) {
+                if(request.getRequestURI().indexOf(ignore) >= 0){
+                    return;
+                }
+            }
             String result = "";
             if (retVal != null) {
                 result = retVal.toString();
