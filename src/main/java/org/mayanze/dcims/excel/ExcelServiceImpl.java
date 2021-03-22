@@ -245,13 +245,13 @@ public class ExcelServiceImpl implements ExcelService{
                         dataRowNumStart = rowHead.getRowNum();
                     }
                     Row dataRow = sheet.getRow(++dataRowNumStart);//数据行是头部行的下一行
-                    if (dataRow == null) {//数据复制完之后跳出复制
+                    if (this.isNull(dataRow)) {//数据复制完之后跳出复制
                         //数据execl,有多个数据部分，一个部分完了后，隔了两个行会有新的部分，如果隔了两个行还没有新的部分则视为已经把数据读完
                         Row newPartRow = sheet.getRow(++dataRowNumStart);
-                        if(newPartRow == null){//空一行没有数据找空两行
+                        if(this.isNull(newPartRow)){//空一行没有数据找空两行
                             newPartRow = sheet.getRow(++dataRowNumStart);
                         }
-                        if (newPartRow != null) {
+                        if (!this.isNull(newPartRow)) {
                             rowPart = newPartRow;
                             rowHead = sheet.getRow(++dataRowNumStart);//头行在新部分的下一行
                         } else {
@@ -443,5 +443,23 @@ public class ExcelServiceImpl implements ExcelService{
             }
         }
         return headrIndex;
+    }
+
+    public boolean isNull(Row dataRow) {
+        if (dataRow == null) {
+            return true;
+        } else {
+            boolean flag = true;
+            short lastCellNum = dataRow.getLastCellNum();
+
+            for(int i = 0; i < lastCellNum; ++i) {
+                dataRow.getCell(i).setCellType(CellType.STRING);
+                if (!StringUtils.isEmpty(dataRow.getCell(i).getStringCellValue().replace(" ", ""))) {
+                    flag = false;
+                }
+            }
+
+            return flag;
+        }
     }
 }
